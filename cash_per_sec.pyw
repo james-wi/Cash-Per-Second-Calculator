@@ -49,7 +49,7 @@ def standardise(n):
             n /= value
             n = SYMBOL + "{0:.2f}".format(n) + unit
             return n
-    return n
+    return SYMBOL + "{0:.2f}".format(n)
 
 ### Save Data
 def save():
