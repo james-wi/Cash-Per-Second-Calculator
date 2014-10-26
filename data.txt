@@ -1,0 +1,7 @@
+Lemonade Stand, Paper Stand, Car Wash, Pizzaria, Donut Shop, Prawn Boat, Hockey Team, Movie Company, Bank, Oil Company
+
+1818, 22.14, 174.96, 3.032, 142.767, 1.696, 21.969, 241.864, 2002, 24031
+
+$ , $k, $k, $m, $m, $bn, $bn, $bn, $bn, $bn
+0.5 , 1 , 2 , 3 , 2 , 6 , 26, 93, 780 , 6480
+$3.64k, $22.14k, $87.48k, $1.01m, $71.38m, $282.67m, $844.96m, $2.60bn, $2.57bn, $3.71bn
