@@ -1,7 +1,7 @@
 Cash-Per-Second-Calculator
 ==========================
 
-A basic Python app using Tkinter, to help me with games in which I earn a certain amount of money over time (I made it with Adventure Capitalist in mind).
+A basic (and right now pretty ugly) Python app using Tkinter, to help me with games in which I earn a certain amount of money over time (I made it with Adventure Capitalist in mind).
 
 A quick look at the running program:
 
