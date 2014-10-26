@@ -53,37 +53,39 @@ def standardise(n):
 def save():
     with open("data.txt", "w") as data:
         data.write(", ".join([c.get() for c in descriptions]))
-        data.write("\n")
+        data.write("||")
         data.write(", ".join([c.get() for c in cashlist]))
-        data.write("\n")
+        data.write("||")
         data.write(", ".join([c.get() for c in ctypelist]))
-        data.write("\n")
+        data.write("||")
         data.write(", ".join([c.get() for c in timelist]))
-        data.write("\n")
+        data.write("||")
         data.write(", ".join([c.get() for c in cperslist]))
 
 ### Load Data
 def load():
     with open("data.txt", "r") as data:
-        descdata = data.readline().split(", ")
-        for d, dd in zip(descriptions, descdata):
-            d.set(dd)
+        data = data.read().split("||")
         
-        cashdata = data.readline().split(", ")
-        for c, cd in zip(cashlist, cashdata):
-            c.set(cd)
-
-        ctypedata = data.readline().split(", ")
-        for ct, ctd in zip(ctypelist, ctypedata):
-            ct.set(ctd)
+        descdata = data[0]
+        for d, dd in zip(descriptions, descdata.split(", ")):
+            d.set(dd.strip("\n"))
         
-        timedata = data.readline().split(", ")
-        for t, td in zip(timelist, timedata):
-            t.set(td)
+        cashdata = data[1]
+        for c, cd in zip(cashlist, cashdata.split(", ")):
+            c.set(cd.strip("\n"))
 
-        cpersdata = data.readline().split(", ")
-        for cp, cpd in zip(cperslist, cpersdata):
-            cp.set(cpd)
+        ctypedata = data[2]
+        for ct, ctd in zip(ctypelist, ctypedata.split(", ")):
+            ct.set(ctd.strip("\n"))
+        
+        timedata = data[3]
+        for t, td in zip(timelist, timedata.split(", ")):
+            t.set(td.strip("\n"))
+
+        cpersdata = data[4]
+        for cp, cpd in zip(cperslist, cpersdata.split(", ")):
+            cp.set(cpd.strip("\n"))
                 
     
 
