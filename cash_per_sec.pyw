@@ -16,7 +16,6 @@ COLUMNS = {
     "Cash/Second" : 4
 }
 
-
 UNITS = []
 VALUES = []
 
@@ -40,6 +39,9 @@ with open("config.txt", "r") as config:
         VALUES.append(amount)
 
 
+def attr_list(obj):
+    return [attr for attr in dir(obj) if not attr.startswith("__")]
+
 ### Convert large numbers to their forms with k, m and bn
 def standardise(n):
     for unit, value in reversed(zip(UNITS, VALUES)):
@@ -52,118 +54,102 @@ def standardise(n):
 ### Save Data
 def save():
     with open("data.txt", "w") as data:
-        data.write(", ".join([c.get() for c in descriptions]))
-        data.write("||")
-        data.write(", ".join([c.get() for c in cashlist]))
-        data.write("||")
-        data.write(", ".join([c.get() for c in ctypelist]))
-        data.write("||")
-        data.write(", ".join([c.get() for c in timelist]))
-        data.write("||")
-        data.write(", ".join([c.get() for c in cperslist]))
+        for row in rows:
+            # Iterate over the names of all the variables, sorted
+            for d in attr_list(row):
+                attr = getattr(row, d).get()
+                data.write(attr)
+                data.write(",")
 
+            data.write("|")
+
+    
 ### Load Data
 def load():
     with open("data.txt", "r") as data:
-        data = data.read().split("||")
-        
-        descdata = data[0]
-        for d, dd in zip(descriptions, descdata.split(", ")):
-            d.set(dd.strip("\n"))
-        
-        cashdata = data[1]
-        for c, cd in zip(cashlist, cashdata.split(", ")):
-            c.set(cd.strip("\n"))
-
-        ctypedata = data[2]
-        for ct, ctd in zip(ctypelist, ctypedata.split(", ")):
-            ct.set(ctd.strip("\n"))
-        
-        timedata = data[3]
-        for t, td in zip(timelist, timedata.split(", ")):
-            t.set(td.strip("\n"))
-
-        cpersdata = data[4]
-        for cp, cpd in zip(cperslist, cpersdata.split(", ")):
-            cp.set(cpd.strip("\n"))
+        data = data.read().split("|")
+        for row, dat in zip(rows, data):
+            d = dat.split(",")
+            for a, d in zip(attr_list(row), d):
+                attr = getattr(row, a)
+                attr.set(d)
+                #print a, d
                 
-    
-
 def change(*args):
-    sum_cpers = 0
-    for index in range(ROWS):
-        cpers = cperslist[index]
+    sum_per_sec = 0
+    for row in rows:
         try:
-            cash = float(cashlist[index].get())
+            cash = float(row.cash.get())
+            cash_units = row.units.get().lstrip(SYMBOL)
+            time = float(row.time.get())
 
-            ctype = ctypelist[index].get().lstrip(SYMBOL)
-            
-            time = float(timelist[index].get())
-
-            if ctype:
-                ref = UNITS.index(ctype)
+            if cash_units:
+                ref = UNITS.index(cash_units)
                 value = VALUES[ref]
                 cash *= value
 
             ct = cash/time
-            sum_cpers += ct
+            sum_per_sec += ct
             
-            cpers.set(str(standardise(ct)))
+            row.per_sec.set(str(standardise(ct)))
         except (ValueError, ZeroDivisionError):
-            cpers.set(SYMBOL + "0.0")
+            row.per_sec.set(SYMBOL + "0.0")
 
 
-    s_sum.set(str(standardise(sum_cpers)))
+    s_sum.set(str(standardise(sum_per_sec)))
+
         
 
 descLabel = Label(root, text="Description").grid(column=COLUMNS["Description"], row=0, padx=10, pady=2)
 cashLabel = Label(root, text="Cash").grid(column=COLUMNS["Cash"], row=0, padx=10, pady=2)
 cashType = Label(root, text="Cash Units").grid(column=COLUMNS["Cash Units"], row=0, padx=10, pady=2)
 timeLabel = Label(root, text="Time").grid(column=COLUMNS["Time"], row=0, padx=10, pady=2)
-cpersLabel = Label(root, text="Cash/Second").grid(column=COLUMNS["Cash/Second"], row=0, padx=10, pady=2)
+per_secLabel = Label(root, text="Cash/Second").grid(column=COLUMNS["Cash/Second"], row=0, padx=10, pady=2)
 
-descriptions = []
-cashlist = []
-ctypelist = []
-timelist = []
-cperslist = []
+class Row(object):
+    def __init__(self):
+        self.description = None
+        self.cash = None
+        self.units = None
+        self.time = None
+        self.per_sec = None
 
-for x in range(ROWS):
+rows = [Row() for _ in range(ROWS)]
+
+for x, row in enumerate(rows):
     s_cash = StringVar()
-    s_cash.trace("w", lambda name, index, mode,
-                 : change())
-
-    cashlist.append(s_cash)
+    s_cash.trace("w", change)
+    row.cash = s_cash
     
     s_time = StringVar()
-    s_time.trace("w", lambda name, index, mode,
-                 s_cash=s_cash: change())
-
-    timelist.append(s_time)
+    s_time.trace("w", change)
+    row.time = s_time
     
-    s_cpers = StringVar()
-    s_cpers.set(SYMBOL + "0.0")
-    cperslist.append(s_cpers)
+    s_per_sec = StringVar()
+    s_per_sec.set(SYMBOL + "0.0")
+    row.per_sec = s_per_sec
 
-    s_ctype = StringVar()
-    s_ctype.set(SYMBOL)
-    ctypelist.append(s_ctype)
+    s_cash_units = StringVar()
+    s_cash_units.set(SYMBOL)
+    row.units = s_cash_units
 
     desc = StringVar()
-    descriptions.append(desc)
+    row.description = desc
 
     Entry(root, textvariable = desc).grid(column=COLUMNS["Description"], row = x+1, padx=5, pady=3)
-    Entry(root, textvariable=s_cash).grid(column=COLUMNS["Cash"], row = x+1, padx=5, pady=3)
-    o = OptionMenu(root, s_ctype, *[SYMBOL+u for u in UNITS], command=change).grid(column=COLUMNS["Cash Units"], row=x+1, padx=2, pady=0)
+    Entry(root, textvariable = s_cash).grid(column=COLUMNS["Cash"], row = x+1, padx=5, pady=3)
+    o = OptionMenu(root, s_cash_units, *[SYMBOL+u for u in UNITS], command=change).grid(column=COLUMNS["Cash Units"], row=x+1, padx=2, pady=0)
     Entry(root, textvariable=s_time).grid(column=COLUMNS["Time"], row = x+1, padx=5, pady=3)
-    Entry(root, textvariable=s_cpers).grid(column=COLUMNS["Cash/Second"], row = x+1, padx=5, pady=3)
+    Entry(root, textvariable=s_per_sec).grid(column=COLUMNS["Cash/Second"], row = x+1, padx=5, pady=3)
 
 s_sum = StringVar()
 Label(root, text="Total Cash/Sec:").grid(column = COLUMNS["Cash/Second"]-1, row=ROWS+1, padx=10, pady=2)
 sum_e = Entry(root, textvariable=s_sum).grid(column = COLUMNS["Cash/Second"], row=ROWS+1, padx=10, pady=2)
 
-save = Button(root, text = "        Save        ", command=save).grid(column = 0, row = ROWS+1, padx=10, pady=10)
-load = Button(root, text = "        Load        ", command=load).grid(column = 1, row = ROWS+1, padx=10, pady=10)
+Button(root, text = "        Save        ", command=save).grid(column = 0, row = ROWS+1, padx=10, pady=10)
+Button(root, text = "        Load        ", command=load).grid(column = 1, row = ROWS+1, padx=10, pady=10)
 
+# Attempt to load data
+load()
 
 root.mainloop()
