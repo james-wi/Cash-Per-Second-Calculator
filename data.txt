@@ -1,7 +1,1 @@
-Lemonade Stand, Paper Stand, Car Wash, Pizzaria, Donut Shop, Prawn Boat, Hockey Team, Movie Company, Bank, Oil Company
-
-1818, 22.14, 174.96, 3.032, 142.767, 1.696, 21.969, 241.864, 2002, 24031
-
-$ , $k, $k, $m, $m, $bn, $bn, $bn, $bn, $bn
-0.5 , 1 , 2 , 3 , 2 , 6 , 26, 93, 780 , 6480
-$3.64k, $22.14k, $87.48k, $1.01m, $71.38m, $282.67m, $844.96m, $2.60bn, $2.57bn, $3.71bn
+6696,Lemonade Stand,$13.39k,0.5,$ ,|113,Newsagent,$226.00k,.5,$k,|1.869,Car Wash,$3.74m,.5,$m,|14.463,Pizzeria,$28.93m,.5,$m,|173.165,Donut Shop,$173.16m,1,$m,|2.124,Shrimp Boat,$708.00m,3,$bn,|25.969,Hockey Team,$2.36bn,11,$bn,|299.912,Movie Company,$13.04bn,23,$bn,|4729,Bank,$24.89bn,190,$bn,|834341,Oil Company,$1.39tn,600,$bn,|
